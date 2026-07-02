@@ -1,0 +1,12 @@
+#!/bin/bash
+if [[ ! $(whoami) == "root" ]]; then
+    exit 1
+fi
+users=$(ps -e -o user= | sort | uniq)
+for user in $users; do
+    sum=$(ps -u $user -o rss | awk 'BEGIN {sum=0} {sum+=1} END {print sum}')
+    if [[ $1 -lt $sum ]]; then
+        maxPid=$(ps -u $user -o pid=,rss= | sort -n -k 2 | head -n 1 | awk '{print $1}')
+        kill "$maxPid"
+    fi
+done

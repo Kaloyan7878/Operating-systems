@@ -1,0 +1,5 @@
+#!/bin/bash
+if [[ -z "$1" ]]; then
+   exit 1
+fi
+awk -F " " '{$1=""; $2=""; $3=NR "."} {print $0}' $1 | cut -d " " -f 3- | sort -k 2

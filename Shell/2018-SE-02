@@ -1,0 +1,14 @@
+#!/bin/bash
+number=0
+touch dict.txt
+while read -r line; do
+    line1=$(echo $line | sed 's/(.*)//')
+    name=$(echo $line1 | awk '{print $1}')
+    family=$(echo $line1 | awk '{print $2}')
+    if ! grep -E "$name $family;.*" dict.txt; then
+        number=$((number + 1))
+        echo "$name $family;$number" >> dict.txt
+    fi
+    numberInFile=$(grep "$name $family;.*" dict.txt | awk -F ";" '{print $2}')
+    echo "$line1" >> "$2/$numberInFile.txt"
+done < "$1"

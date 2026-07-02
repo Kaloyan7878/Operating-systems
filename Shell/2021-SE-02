@@ -1,0 +1,12 @@
+#!/bin/bash
+today=$(date +%Y%m%d)
+for file in "$@"; do
+    serial=$(cat "$file" | sed 's/;.*//' | grep -o -E "[ (][0-9]{10} ")
+    dateF=$((serial/100))
+    if [[ $today -gt $dateF ]]; then
+        newSerial="${today}00"
+    else
+        newSerial=$((serial+1))
+    fi
+    sed -i "s/$serial/$newSerial/" "$file"
+done
