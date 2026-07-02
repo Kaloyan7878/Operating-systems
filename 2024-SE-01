@@ -1,0 +1,30 @@
+#!/bin/bash
+i=0
+j=0
+for arg in "$@"; do
+    if [[ "arg" =~ ^-R ]]; then
+        toChange[$i]=$(echo "$arg" | tr -d "-R")
+        marker=$(pwgen 20 1)
+        toChange[$i]="$(toChange[$i]):$marker"
+        i=$((i+1))
+    else
+        files[$j]=$arg
+        j=$((j+1))
+fi
+done
+for replace in ${toChange[@]}; do
+    wordToReplace=$(echo "$replace" | awk -F "=" '{print $1}')
+    markerToPlace=$(echo "$replace" | awk -F ":" '{print $2}')
+    for file in ${files[@]}; do
+        sed -i "s/\b$wordToReplace\b/$markerToPlace/g" $file
+    done
+done
+for replace in ${toChange[@]}; do
+    markerToReplace=$(echo $replace | awk -F ":" '{print $2}')
+    wordToPlace=$(echo $replace | awk -F ":" {print $1} | awk -F "=" '{print $2}')
+    for file in ${files[@]}; do
+        sed -i "s/\b$markerToReplace\b/$wordToPlace/g" $file
+    done
+done
+
+

@@ -1,0 +1,12 @@
+#!/bin/bash
+special_file=/proc/acpi/wakeup
+if [[ ! -f "$1" ]]; then
+   exit 1
+sed -e 's/^#.*$//' -e 's/^ *$' $1 | while read -r DEV STATUS; do
+   current_line=$(grep -E "^$DEV .*$" $special_file)
+   if [[ -n $current_line ]]; then
+       if [[ "$STATUS" != "$(echo $current_line | awk '{print $3}' | tr -d '*')" ]]; then
+           echo $DEV > $special_file
+       fi
+    fi
+done

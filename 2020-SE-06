@@ -1,0 +1,10 @@
+#!/bin/bash
+checkIfExists=$(grep -E " *$2 *=" $1)
+nameAndDate=$(echo "at $(date) by $(whoami)")
+if [[ -n $checkIfExists ]]; then
+   toFind=$(echo $checkIfExists | cut -d '=' -f 1)
+   awk -F "=" -v toFind=$toFind -v nameAndDate=$nameAndDate -v key=$2 -v value=$3 \
+   '$1==toFind {$0="# "$0" # edited "nameAndDate"\n"key" = "value" # added"nameAndDate} {print $0}' $1 \
+   > temp.txt && mv temp.txt $1
+else
+   echo "$2 = $3 # added at $nameAndDate" > $1

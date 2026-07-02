@@ -1,0 +1,17 @@
+#!/bin/bash
+if [[ ! -f "$1" || ! -f "$2" ]]; then
+    exit
+fi
+inputFile=$2
+while read language types baseDir; do #ne e vqrno!!!!!!!!!!1
+    $opt=""
+    if echo "$types" | grep -q "^.* visitor .*$"; then
+        opts="$opts -visitor"
+    fi
+    if ! echo "$types" | grep -q "^.* listener .*$"; then
+        opts="$opts -no-listener"
+    fi
+    formattedBaseDir=$(echo "$baseDir" | tr -d "'" )
+    formattedInputFile=$(echo "$inputFile" | awk -F "/" '{print $2}' | awk -F "." '{print $1}')
+    antlr4 -Dlanguage=$language $opts $formattedBaseDir/$formattedInputFile $inputFile
+done < "$1"

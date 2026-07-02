@@ -1,0 +1,20 @@
+#!/bin/bash
+if [[ $(whoami) != "root" ]]; then
+    exit 1
+fi
+rootMem=$(ps -u "root" -o rss= | awk 'BEGIN {sum=0} {sum+=$1} END {print sum}')
+while IFS=: read -r username passwd uid gid comm homeDir shell; do
+    if [[ "$username" == "root" ]]; then
+        continue
+    fi
+    ownerHome=$(stat -c '%U' $homeDir)
+    writePerm=$(stat -c '%a' $homeDir | cut -c 1)
+    if [[ ! -d $homeDir || $ownerHome != $username || $writePerm -eq 5 || $writePerm -eq 4 || $writePerm -eq 1 ]]; then
+        userMem=$(ps -u "$username" -o rss= | awk '{sum+=$1} END {print sum}')
+        if [[ $rootMem -lt $userMem ]]; then
+            while read pid; do
+                kill $pid
+            done < <(ps -u "$username" -o pid=)
+        fi
+    fi
+done < /etc/passwd

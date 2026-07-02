@@ -1,0 +1,10 @@
+#!/bin/bash
+if [[ ! -d "$1" ]]; then
+   exit 1
+fi
+IFS=$'\n'
+for symlink in $(find $1 -type l -exec stat -c "%N" {} \;); do
+    if [[ ! -f $(echo $symlink | awk -F "-> " '{print $2}' | tr -d "'") ]]; then
+        echo $symlink
+    fi
+done

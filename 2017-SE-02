@@ -1,0 +1,20 @@
+#!/bin/bash
+if [[ ! $(whoami) == "root" ]]; then
+   exit 1
+fi
+SRC=$1
+DST=$2
+str="ABC"
+if [[ -n $(ls $DST) ]]; then
+   exit 1
+fi
+IFS='\n'
+for file in $(find "$SRC" -name "*ABC*"); do
+    newPath=$(echo $file | sed "s|$SRC|$DST|")
+    dirToMake=$(dirname "$newPath")
+    if [[ -d $dirToMake ]]; then
+       mv "$file" "$dirToMake/$(basename "$file")"
+    else
+      mkdir -p $dirToMake
+      mv "$file" "$dirToMake/$(basename "$file")"
+done
