@@ -1,9 +1,0 @@
-#!/bin/bash
-[[ "$(whoami)" != "root" ]] && {
- echo "Should be from root!"
- exit 1
- }
-cut -d ':' -f 1,6 /etc/passwd | while IFS=: read -r username homedir; do
- perm=$(stat -c "%a" "$homedir" | cut -c 1)
- if [[ ! -d homedir ]] || [[ perm -eq 0 || perm -eq 1 || perm -eq 4 || perm -eq 5 ]]; then
-   echo "${username} has no homedir or cannot write!"
