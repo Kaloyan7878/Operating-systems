@@ -1,4 +1,30 @@
 #!/bin/bash
+#Ваш бивш съученик спешно иска помощ с автоматизация на използването на външния инструмент ANTLR.
+
+#Напишете скрипт build.sh, управляван от конфигурационни файлове от вида:
+
+#<език> <желани типове изходни файлове> '<базова изходна директория>'
+
+#Примерен конфигурационен файл:
+
+#Go recognizer listener '/foo'
+#JavaScript visitor recognizer '/bar'
+#Java listener recognizer visitor '/baz'
+
+#build.sh приема два аргумента: име на конфигурационен файл и име на входен файл. Трябва да извика ANTLR по веднъж за
+#всеки ред от конфигурационния файл:
+
+#antlr4 -Dlanguage=<език> <опции> -o <изходна директория> <входен файл>
+
+#Изходната директория е поддиректория с име, съответстващо на името на входния файл (без разширение), в базовата изходна директория. Recognizer файловете се генерират винаги; Listener — ако не е подадена опция -no-listener; Visitor — ако е подадена опция -visitor.
+
+#Пример (Antlrfile, ./build.sh Antlrfile grammar/Query.g4) трябва да доведе до:
+
+#antlr4 -Dlanguage=Go -o /foo/Query grammar/Query.g4
+#antlr4 -Dlanguage=JavaScript -no-listener -visitor -o /bar/Query grammar/Query.g4
+#antlr4 -Dlanguage=Java -visitor -o /baz/Query grammar/Query.g4
+
+
 if [[ ! -f "$1" || ! -f "$2" ]]; then
     exit
 fi
