@@ -1,4 +1,35 @@
 #!/bin/bash
+#Под конфигурационен файл ще разбираме файл, в който има редове от вида key=value (key/value от букви, цифри, _), с възможни празни редове,
+#whitespace около = и коментари след #.
+
+#Под <date> разбираме текущото време, върнато от date; под <user> — името на текущия потребител.
+
+#Напишете shell скрипт set_value.sh, който приема 3 позиционни аргумента — име на конфигурационен файл, ключ (foo) и стойност (bar).
+#Ако ключът:
+
+#присъства във файла с друга стойност — закоментирайте стария ред (добавете # в началото и # edited at <date> by <user> в края),
+#и добавете нов ред foo = bar # added at <date> by <user> точно след стария;
+#не присъства — добавете foo = bar # added at <date> by <user> в края на файла.
+
+#Пример:
+
+#$ cat foo.conf
+## route description
+#from = Sofia
+#to = Varna # my favourite city!
+#type = t2_1
+
+#$ ./set_value.sh foo.conf to Plovdiv
+
+#Резултат:
+
+## route description
+#from = Sofia
+## to = Varna # my favourite city! # edited at Tue Aug 25 15:48:29 EEST 2020 by human
+#to = Plovdiv # added at Tue Aug 25 15:48:29 EEST 2020 by human
+#type = t2_1
+
+
 checkIfExists=$(grep -E " *$2 *=" $1)
 nameAndDate=$(echo "at $(date) by $(whoami)")
 if [[ -n $checkIfExists ]]; then
